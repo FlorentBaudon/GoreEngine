@@ -149,9 +149,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\RaycastTools.cpp" />
     <ClCompile Include="Src\main_glfw.cpp" />
     <ClCompile Include="Src\main_glut.cpp" />
     <ClCompile Include="Src\OldMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\RaycastTools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include "RaycastTools.h"
+
 #define PI 3.1415f
 
 using namespace glm;
@@ -104,25 +106,8 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 void drawRayCast(vec2 p, vec2 fwd)
 {
-	float dx = 0, dy = 0;
-	
-	if(abs(fwd.y) > abs(fwd.x))
-	{
-		
-		 dy = (fwd.y > 0) ? ceil(p.y / 64)*64 - p.y : floor(p.y / 64)*64 - p.y;
-		 dx =  tan(p_angle + PI/2) * dy;	
-	}else
-	{
-		dx = (fwd.x > 0) ? ceil(p.x / 64)*64 - p.x : floor(p.x / 64)*64 - p.x;
-		dy =  -tan(p_angle) * dx;
-	}
-	
-	std::cout << dx + p.x << " - " << dy +  p.y << std::endl;
-	glColor3f(0, 1, 0);
-	glPointSize(8);
-	glBegin(GL_POINTS);
-	glVertex2f(p.x + dx , p.y + dy);
-	glEnd();
+	findHorizontalIntersect(p, fwd, p_angle, mapS);
+	findVerticalIntersect(p, fwd, p_angle, mapS);
 }
 
 void display() 
