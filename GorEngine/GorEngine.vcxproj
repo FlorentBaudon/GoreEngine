@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\BackupCode.cpp" />
     <ClCompile Include="Src\RaycastTools.cpp" />
     <ClCompile Include="Src\main_glfw.cpp" />
     <ClCompile Include="Src\main_glut.cpp" />

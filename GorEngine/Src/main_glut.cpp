@@ -13,13 +13,11 @@
 
 using namespace glm;
 
-//Player
-// float px = 288, py = 288;
-// const float pdx = 1, pdy = 0;
+int resX = 1000, resY = 1000;
 
 vec2 world_forward = vec2(1,0);
 
-vec2 player_pos = vec2(288, 288);
+vec2 player_pos = vec2(288 + 33 + 64, 288);
 vec2 player_forward = world_forward;
 
 float p_angle = radians(60.0f);
@@ -41,10 +39,10 @@ int map[] =
 void CreateGLWindow()
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(resX, resY);
 	glutCreateWindow("G0r3ng1n3");
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	gluOrtho2D(0,800, 600,0);
+	gluOrtho2D(0,resX, resY,0);
 }
 
 void drawMap() 
@@ -96,18 +94,17 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 	//rotate player dir vector
 	
-	int rayLength = 1000;
-	glLineWidth(4);
-	glBegin(GL_LINES);
-	glVertex2f(p.x, p.y);
-	glVertex2f(p.x + fwd.x * rayLength, p.y + fwd.y * rayLength);
-	glEnd();
+	// int rayLength = 1000;
+	// glLineWidth(4);
+	// glBegin(GL_LINES);
+	// glVertex2f(p.x, p.y);
+	// glVertex2f(p.x + fwd.x * rayLength, p.y + fwd.y * rayLength);
+	// glEnd();
 }
 
 void drawRayCast(vec2 p, vec2 fwd)
 {
-	findHorizontalIntersect(p, fwd, p_angle, mapS);
-	findVerticalIntersect(p, fwd, p_angle, mapS);
+	drawRaycast(p, fwd, p_angle, mapS, map, mapX, mapY);
 }
 
 void display() 
@@ -124,10 +121,13 @@ void display()
 
 void processInput(unsigned char key, int x, int y) 
 {
-	if (key == 'z') { player_pos.y -= 5; }
-	if (key == 's') { player_pos.y += 5; }
-	if (key == 'q') { p_angle += radians(10.0f); }
-	if (key == 'd') { p_angle -= radians(10.0f); }
+	float s = 5.0f;
+	if (key == 'z') { player_pos.y -= s; }
+	if (key == 's') { player_pos.y += s; }
+	if (key == 'q') { player_pos.x -= s; }
+	if (key == 'd') { player_pos.x += s; }
+	if (key == 'a') { p_angle += radians(10.0f); }
+	if (key == 'e') { p_angle -= radians(10.0f); }
 
 	glutPostRedisplay();
 }
