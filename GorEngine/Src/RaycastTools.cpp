@@ -4,13 +4,15 @@
 #include "RaycastTools.h"
 
 #define PI 3.1415f
+#define DEG2RAD(x) x*(3.1415f/180.f)
+#define RAD2DEG(x) x*(180.f/3.1415f)
 
 using namespace glm;
 
 void drawLine(vec2 start, vec2 end, vec3 color = vec3(0, 1, 0))
 {
 	glColor3f(color.r, color.g, color.b);
-	glLineWidth(4);
+	glLineWidth(1);
 	glBegin(GL_LINES);
 	glVertex2f(start.x, start.y);
 	glVertex2f(end.x, end.y);
@@ -55,8 +57,14 @@ vec2 findHorizontalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int 
 	vec2 d = vec2(0, 0);
 
 	bool bIntersect = false;
-
-	p.y = (dir.y > 0) ? ceil(pos.y / cellSize) * cellSize - pos.y : floor(pos.y / cellSize) * cellSize - pos.y - 0.0001;
+	if (dir.y < 0) 
+	{
+		p.y = int(pos.y / cellSize) * cellSize - pos.y - 0.0001f;
+	}else 
+	{
+		p.y = int(pos.y / cellSize) * cellSize - pos.y + cellSize;
+	}
+	//p.y = (dir.y > 0) ? ceil(pos.y / cellSize) * cellSize - pos.y : floor(pos.y / cellSize) * cellSize - pos.y - 0.0001f;
 	p.x = tan(angle + PI / 2) * p.y;
 	p = pos + p;
 	
@@ -84,7 +92,15 @@ vec2 findVerticalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int ma
 
 	bool bIntersect = false;
 
-	p.x = (dir.x > 0) ? ceil(pos.x / cellSize) * 64 - pos.x : floor(pos.x / cellSize) * cellSize - pos.x - 0.0001;
+	if (dir.x < 0) 
+	{
+		p.x = int(pos.x / cellSize) * cellSize - pos.x - 0.0001f;
+	}else 
+	{
+		p.x = int(pos.x / cellSize) * 64 - pos.x + cellSize;
+	}
+
+	//p.x = (dir.x > 0) ? ceil(pos.x / cellSize) * 64 - pos.x : floor(pos.x / cellSize) * cellSize - pos.x - 0.0001f;
 	p.y = -tan(angle) * p.x;
 	p = pos + p;
 
@@ -113,6 +129,28 @@ void drawRaycast(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int m
 	
 	drawPoint( (dH < dV) ? pH : pV, vec3(0,1,0));
 	drawLine(pos, (dH < dV) ? pH : pV, vec3(0,1,0));
+}
+
+void scanEnv(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
+{
+	fov = DEG2RAD(60);
+	float r_angle = angle - (30.0f * 0.0174533f);
+
+	if (r_angle < 0) r_angle += 2 * PI;
+	if (r_angle > 2 * PI) r_angle -= 2 * PI;
+
+	vec2 r_dir = vec2(cos(r_angle) * dir.x - sin(r_angle) * dir.y, sin(r_angle) * dir.x + cos(r_angle) * dir.y);
+
+	for (int i = 0; i < RAD2DEG(fov); i++)
+	{
+		drawRaycast(pos, r_dir, r_angle, cellSize, map, mapSizeX, mapSizeY);
+
+		r_angle += 0.0174533f;
+
+		if (r_angle < 0) r_angle += 2 * PI;
+		if (r_angle > 2 * PI) r_angle -= 2 * PI;
+	}
+	// 5.968834f
 }
 
 

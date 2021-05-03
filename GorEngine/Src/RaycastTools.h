@@ -5,3 +5,5 @@ glm::vec2 findHorizontalIntersect(glm::vec2 pos, glm::vec2 dir, float angle, int
 glm::vec2 findVerticalIntersect(glm::vec2 pos, glm::vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY);
 
 void drawRaycast(glm::vec2 pos, glm::vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY);
+
+void scanEnv(glm::vec2 pos, glm::vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov);

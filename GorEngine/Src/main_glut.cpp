@@ -10,12 +10,15 @@
 #include "RaycastTools.h"
 
 #define PI 3.1415f
+#define DEG2RAD(x) x*(3.1415f/180.f)
+#define RAD2DEG(x) x*(180.f/3.1415f)
 
 using namespace glm;
 
 int resX = 1000, resY = 1000;
 
 vec2 world_forward = vec2(1,0);
+float fov = DEG2RAD(60.f);
 
 vec2 player_pos = vec2(288 + 33 + 64, 288);
 vec2 player_forward = world_forward;
@@ -104,7 +107,8 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 void drawRayCast(vec2 p, vec2 fwd)
 {
-	drawRaycast(p, fwd, p_angle, mapS, map, mapX, mapY);
+	//drawRaycast(p, fwd, p_angle, mapS, map, mapX, mapY);
+	scanEnv(p, fwd, p_angle, mapS, map, mapX, mapY, fov);
 }
 
 void display() 
