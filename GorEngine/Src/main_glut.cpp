@@ -107,8 +107,7 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 void drawRayCast(vec2 p, vec2 fwd)
 {
-	//drawRaycast(p, fwd, p_angle, mapS, map, mapX, mapY);
-	scanEnv(p, fwd, p_angle, mapS, map, mapX, mapY, fov);
+	scanEnv(p, p_angle, mapS, map, mapX, mapY, fov);
 }
 
 void display() 
@@ -126,8 +125,8 @@ void display()
 void processInput(unsigned char key, int x, int y) 
 {
 	float s = 5.0f;
-	if (key == 'z') { player_pos += player_forward; }
-	if (key == 's') { player_pos -= player_forward; }
+	if (key == 'z') { player_pos += (player_forward * s); }
+	if (key == 's') { player_pos -= (player_forward * s); }
 	if (key == 'q') { player_pos.x -= s; }
 	if (key == 'd') { player_pos.x += s; }
 	if (key == 'a') { p_angle += radians(10.0f); }

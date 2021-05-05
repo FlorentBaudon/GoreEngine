@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 
 #include "RaycastTools.h"
+#include "GlewDrawFunctions.h"
 
 #define PI 3.1415f
 #define DEG2RAD(x) x*(3.1415f/180.f)
@@ -9,26 +10,7 @@
 
 using namespace glm;
 
-void drawLine(vec2 start, vec2 end, vec3 color = vec3(0, 1, 0))
-{
-	glColor3f(color.r, color.g, color.b);
-	glLineWidth(1);
-	glBegin(GL_LINES);
-	glVertex2f(start.x, start.y);
-	glVertex2f(end.x, end.y);
-	glEnd();
-}
-
-void drawPoint(vec2 p, vec3 color = vec3(0,1,1))
-{
-	glColor3f(color.r, color.g, color.b);
-	glPointSize(8);
-	glBegin(GL_POINTS);
-	glVertex2f(p.x, p.y);
-	glEnd();
-}
-
-bool checkIfIntersect(vec2 p, vec2 dir, int cellSize, int map[], int mapSizeX, int mapSizeY)
+bool checkIfIntersect(vec2 p, int cellSize, int map[], int mapSizeX, int mapSizeY)
 {
 	if (p.x > mapSizeX * cellSize || p.y > mapSizeY * cellSize || p.x < 0 || p.y < 0)
 	{
@@ -51,7 +33,7 @@ bool checkIfIntersect(vec2 p, vec2 dir, int cellSize, int map[], int mapSizeX, i
 	return false;
 }
 
-vec2 findHorizontalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
+vec2 findHorizontalIntersect(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
 {
 	vec2 p = vec2(0, 0);
 	vec2 delta = vec2(0, 0);
@@ -81,20 +63,20 @@ vec2 findHorizontalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int 
 	}
 	
 	
-	bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
+	bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
 
 
 	while (!bIntersect) 
 	{
 		p = p + delta;
-		bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
+		bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
 	}
 
 	return p;
 
 }
 
-vec2 findVerticalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
+vec2 findVerticalIntersect(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
 {
 
 	vec2 p = vec2(0, 0);
@@ -126,46 +108,39 @@ vec2 findVerticalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int ma
 		return vec2(100000, 100000); // return infinite point 
 	}
 
-	bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
+	bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
 	
 	while (!bIntersect)
 	{
 		p = p + d;
-		bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
+		bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
 	}
 
 	return p;
 }
 
-void drawRaycast(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY)
+void drawRaycast(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY)
 {
-	vec2 pH = findHorizontalIntersect(pos, dir, angle, cellSize, map, mapSizeX, mapSizeY);
-	vec2 pV = findVerticalIntersect(pos, dir, angle, cellSize, map, mapSizeX, mapSizeY);
+	vec2 pH = findHorizontalIntersect(pos, angle, cellSize, map, mapSizeX, mapSizeY);
+	vec2 pV = findVerticalIntersect(pos, angle, cellSize, map, mapSizeX, mapSizeY);
 
 	float dH =length(pH-pos);
 	float dV =length(pV-pos);
 
-	//printf("Length DV %f - DH %f \n", dV, dH);
-
-	drawPoint( (dH < dV) ? pH : pV, vec3(0,1,0));
 	drawLine(pos, (dH < dV) ? pH : pV, vec3(0,1,0));
 }
 
-void scanEnv(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
+void scanEnv(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
 {
 	fov = DEG2RAD(90);
 	float r_angle = angle - fov/2;
+	float step = 0.1f;
 
-	//if (r_angle < 0) r_angle += 2 * PI;
-	//if (r_angle > 2 * PI) r_angle -= 2 * PI;
-
-	vec2 r_dir = vec2(cos(r_angle) * dir.x - sin(r_angle) * dir.y, sin(r_angle) * dir.x + cos(r_angle) * dir.y);
-
-	for (int i = 0; i < RAD2DEG(fov); i++)
+	for (float i = 0; i < RAD2DEG(fov); i+=step)
 	{
-		drawRaycast(pos, dir, r_angle, cellSize, map, mapSizeX, mapSizeY);
+		drawRaycast(pos, r_angle, cellSize, map, mapSizeX, mapSizeY);
 
-		r_angle += 0.0174533f;
+		r_angle += DEG2RAD(step);
 
 		if (r_angle < 0) r_angle += 2 * PI;
 		if (r_angle > 2 * PI) r_angle -= 2 * PI;

@@ -154,8 +154,10 @@
     <ClCompile Include="Src\main_glfw.cpp" />
     <ClCompile Include="Src\main_glut.cpp" />
     <ClCompile Include="Src\OldMain.cpp" />
+    <ClCompile Include="Src\GlewDrawFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\GlewDrawFunctions.h" />
     <ClInclude Include="Src\RaycastTools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

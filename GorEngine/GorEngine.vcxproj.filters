@@ -27,10 +27,19 @@
     <ClCompile Include="Src\RaycastTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\BackupCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GlewDrawFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RaycastTools.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GlewDrawFunctions.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
