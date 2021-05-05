@@ -132,7 +132,6 @@ void drawRaycast(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, i
 
 void scanEnv(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
 {
-	fov = DEG2RAD(90);
 	float r_angle = angle - fov/2;
 	float step = 0.1f;
 

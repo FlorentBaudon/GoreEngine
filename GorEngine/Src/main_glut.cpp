@@ -15,12 +15,12 @@
 
 using namespace glm;
 
-int resX = 1000, resY = 1000;
+int resX = 600, resY = 600;
 
 vec2 world_forward = vec2(1,0);
-float fov = DEG2RAD(60.f);
+float fov = DEG2RAD(180.f);
 
-vec2 player_pos = vec2(288 + 33 + 64, 288);
+vec2 player_pos = vec2(288, 288);
 vec2 player_forward = world_forward;
 
 float p_angle = radians(60.0f);
@@ -39,13 +39,23 @@ int map[] =
 1,1,1,1,1,1,1,1
 };
 
-void CreateGLWindow()
+void Create2DGLWindow(int posX, int posY)
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(resX, resY);
-	glutCreateWindow("G0r3ng1n3");
+	glutCreateWindow("G0r3ng1n3 - 2D Viewer");
+	glutPositionWindow(posX, posY);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	gluOrtho2D(0,resX, resY,0);
+}
+
+void Create3DGLWindow(int posX, int posY)
+{
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowSize(resX, resY);
+	glutCreateWindow("G0r3ng1n3 - 3D");
+	glutPositionWindow(posX, posY);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 }
 
 void drawMap() 
@@ -97,7 +107,7 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 	//rotate player dir vector
 	
-	 int rayLength = 1000;
+	 int rayLength = 20;
 	 glLineWidth(4);
 	 glBegin(GL_LINES);
 	 glVertex2f(p.x, p.y);
@@ -110,14 +120,21 @@ void drawRayCast(vec2 p, vec2 fwd)
 	scanEnv(p, p_angle, mapS, map, mapX, mapY, fov);
 }
 
-void display() 
+void display3D() 
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	refreshPlayerDatas();
+
+	glutSwapBuffers();
+}
+
+void display2D() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawMap();
-	
-	refreshPlayerDatas();
-	drawPlayer(player_pos, player_forward);
 	drawRayCast(player_pos, player_forward);
+	drawPlayer(player_pos, player_forward);
 
 	glutSwapBuffers();
 }
@@ -139,10 +156,14 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 
-	CreateGLWindow();
-	
-	glutDisplayFunc(display);
+	Create3DGLWindow(1000, 0);
 	glutKeyboardFunc(processInput);
+	glutDisplayFunc(display3D);
+
+	Create2DGLWindow(0,0);
+	
+	glutDisplayFunc(display2D);
+
 	glutMainLoop();
 
 	return 0;
