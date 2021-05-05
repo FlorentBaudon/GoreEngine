@@ -97,12 +97,12 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 	//rotate player dir vector
 	
-	// int rayLength = 1000;
-	// glLineWidth(4);
-	// glBegin(GL_LINES);
-	// glVertex2f(p.x, p.y);
-	// glVertex2f(p.x + fwd.x * rayLength, p.y + fwd.y * rayLength);
-	// glEnd();
+	 int rayLength = 1000;
+	 glLineWidth(4);
+	 glBegin(GL_LINES);
+	 glVertex2f(p.x, p.y);
+	 glVertex2f(p.x + fwd.x * rayLength, p.y + fwd.y * rayLength);
+	 glEnd();
 }
 
 void drawRayCast(vec2 p, vec2 fwd)
@@ -126,8 +126,8 @@ void display()
 void processInput(unsigned char key, int x, int y) 
 {
 	float s = 5.0f;
-	if (key == 'z') { player_pos.y -= s; }
-	if (key == 's') { player_pos.y += s; }
+	if (key == 'z') { player_pos += player_forward; }
+	if (key == 's') { player_pos -= player_forward; }
 	if (key == 'q') { player_pos.x -= s; }
 	if (key == 'd') { player_pos.x += s; }
 	if (key == 'a') { p_angle += radians(10.0f); }

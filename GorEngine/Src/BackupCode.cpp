@@ -27,9 +27,9 @@
 // 	
 // 	float Tan=tan(ra);
 // 	
-// 	if(cos(ra)> 0.001){ rx=(((int)px>>6)<<6)+64;      ry=(px-rx)*Tan+py; xo= 64; yo=-xo*Tan;}//looking left
-// 	else if(cos(ra)<-0.001){ rx=(((int)px>>6)<<6) -0.0001; ry=(px-rx)*Tan+py; xo=-64; yo=-xo*Tan;}//looking right
-// 	else { rx=px; ry=py; dof=8;}                                                  //looking up or down. no hit  
+ 	//if(cos(ra)> 0.001){ rx=(((int)px>>6)<<6)+64;      ry=(px-rx)*Tan+py; xo= 64; yo=-xo*Tan;}//looking left
+ 	//else if(cos(ra)<-0.001){ rx=(((int)px>>6)<<6) -0.0001; ry=(px-rx)*Tan+py; xo=-64; yo=-xo*Tan;}//looking right
+ 	//else { rx=px; ry=py; dof=8;}                                                  //looking up or down. no hit  
 // 	
 // 	while(dof<8) 
 // 	{ 

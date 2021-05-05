@@ -54,29 +54,39 @@ bool checkIfIntersect(vec2 p, vec2 dir, int cellSize, int map[], int mapSizeX, i
 vec2 findHorizontalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
 {
 	vec2 p = vec2(0, 0);
-	vec2 d = vec2(0, 0);
+	vec2 delta = vec2(0, 0);
 
 	bool bIntersect = false;
-	if (dir.y < 0) 
+
+	if (sin(angle) > 0.001f) 
 	{
 		p.y = int(pos.y / cellSize) * cellSize - pos.y - 0.0001f;
-	}else 
+		p.x = tan(angle + PI / 2) * p.y;
+		p = pos + p;
+
+		delta.x = cellSize / tan(angle);
+		delta.y = -cellSize;
+	}
+	else if(sin(angle) < -0.001f)
 	{
 		p.y = int(pos.y / cellSize) * cellSize - pos.y + cellSize;
+		p.x = tan(angle + PI / 2) * p.y;
+		p = pos + p;
+
+		delta.x = cellSize / tan(-angle);
+		delta.y = +cellSize;
 	}
-	//p.y = (dir.y > 0) ? ceil(pos.y / cellSize) * cellSize - pos.y : floor(pos.y / cellSize) * cellSize - pos.y - 0.0001f;
-	p.x = tan(angle + PI / 2) * p.y;
-	p = pos + p;
+	else {
+		return vec2(100000, 100000);
+	}
+	
 	
 	bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
 
-	//calculate dx and dy
-	d.x = cellSize/tan((dir.y < 0.f) ? +angle : -angle);
-	d.y = (dir.y > 0.f) ? +cellSize : -cellSize;
-	
+
 	while (!bIntersect) 
 	{
-		p = p + d;
+		p = p + delta;
 		bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
 	}
 
@@ -92,23 +102,31 @@ vec2 findVerticalIntersect(vec2 pos, vec2 dir, float angle, int cellSize, int ma
 
 	bool bIntersect = false;
 
-	if (dir.x < 0) 
+	if (cos(angle) < -0.001f) 
 	{
 		p.x = int(pos.x / cellSize) * cellSize - pos.x - 0.0001f;
-	}else 
+		p.y = -tan(angle) * p.x;
+		p = pos + p;
+
+		d.x = -cellSize;
+		d.y = cellSize * tan(angle);
+
+	}
+	else if (cos(angle) > 0.001f)
 	{
 		p.x = int(pos.x / cellSize) * 64 - pos.x + cellSize;
+		p.y = -tan(angle) * p.x;
+		p = pos + p;
+
+		d.x = cellSize;
+		d.y = cellSize * tan(-angle);
+	}
+	else 
+	{
+		return vec2(100000, 100000); // return infinite point 
 	}
 
-	//p.x = (dir.x > 0) ? ceil(pos.x / cellSize) * 64 - pos.x : floor(pos.x / cellSize) * cellSize - pos.x - 0.0001f;
-	p.y = -tan(angle) * p.x;
-	p = pos + p;
-
 	bIntersect = checkIfIntersect(p, dir, cellSize, map, mapSizeX, mapSizeY);
-
-	//calculate dx and dy
-	d.x = (dir.x > 0.f) ? +cellSize : -cellSize;
-	d.y = cellSize * tan((dir.x < 0.f) ? +angle : -angle);
 	
 	while (!bIntersect)
 	{
@@ -126,31 +144,32 @@ void drawRaycast(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int m
 
 	float dH =length(pH-pos);
 	float dV =length(pV-pos);
-	
+
+	//printf("Length DV %f - DH %f \n", dV, dH);
+
 	drawPoint( (dH < dV) ? pH : pV, vec3(0,1,0));
 	drawLine(pos, (dH < dV) ? pH : pV, vec3(0,1,0));
 }
 
 void scanEnv(vec2 pos, vec2 dir, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
 {
-	fov = DEG2RAD(60);
-	float r_angle = angle - (30.0f * 0.0174533f);
+	fov = DEG2RAD(90);
+	float r_angle = angle - fov/2;
 
-	if (r_angle < 0) r_angle += 2 * PI;
-	if (r_angle > 2 * PI) r_angle -= 2 * PI;
+	//if (r_angle < 0) r_angle += 2 * PI;
+	//if (r_angle > 2 * PI) r_angle -= 2 * PI;
 
 	vec2 r_dir = vec2(cos(r_angle) * dir.x - sin(r_angle) * dir.y, sin(r_angle) * dir.x + cos(r_angle) * dir.y);
 
 	for (int i = 0; i < RAD2DEG(fov); i++)
 	{
-		drawRaycast(pos, r_dir, r_angle, cellSize, map, mapSizeX, mapSizeY);
+		drawRaycast(pos, dir, r_angle, cellSize, map, mapSizeX, mapSizeY);
 
 		r_angle += 0.0174533f;
 
 		if (r_angle < 0) r_angle += 2 * PI;
 		if (r_angle > 2 * PI) r_angle -= 2 * PI;
 	}
-	// 5.968834f
 }
 
 
