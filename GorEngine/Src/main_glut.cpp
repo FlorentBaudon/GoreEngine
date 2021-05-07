@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "RaycastTools.h"
+#include "GlewDrawFunctions.h"
 
 #define PI 3.1415f
 #define DEG2RAD(x) x*(3.1415f/180.f)
@@ -15,10 +16,14 @@
 
 using namespace glm;
 
+bool bDebugViewer = true;
+
 int resX = 600, resY = 600;
 
+int TwoDWindow, ThreeDWindow;
+
 vec2 world_forward = vec2(1,0);
-float fov = DEG2RAD(180.f);
+float fov = DEG2RAD(60.f);
 
 vec2 player_pos = vec2(288, 288);
 vec2 player_forward = world_forward;
@@ -39,23 +44,28 @@ int map[] =
 1,1,1,1,1,1,1,1
 };
 
-void Create2DGLWindow(int posX, int posY)
+int Create2DGLWindow(int posX, int posY)
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(resX, resY);
-	glutCreateWindow("G0r3ng1n3 - 2D Viewer");
+	int id = glutCreateWindow("G0r3ng1n3 - 2D Viewer");
 	glutPositionWindow(posX, posY);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	gluOrtho2D(0,resX, resY,0);
+
+	return id;
 }
 
-void Create3DGLWindow(int posX, int posY)
+int Create3DGLWindow(int posX, int posY)
 {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(resX, resY);
-	glutCreateWindow("G0r3ng1n3 - 3D");
+	int id = glutCreateWindow("G0r3ng1n3 - 3D");
 	glutPositionWindow(posX, posY);
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	gluOrtho2D(0, resX, resY, 0);
+
+	return id;
 }
 
 void drawMap() 
@@ -115,16 +125,12 @@ void drawPlayer(vec2 p, vec2 fwd)
 	 glEnd();
 }
 
-void drawRayCast(vec2 p, vec2 fwd)
-{
-	scanEnv(p, p_angle, mapS, map, mapX, mapY, fov);
-}
-
 void display3D() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	refreshPlayerDatas();
+	scanEnv(player_pos, p_angle, mapS, map, mapX, mapY, fov);
 
 	glutSwapBuffers();
 }
@@ -133,8 +139,8 @@ void display2D()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawMap();
-	drawRayCast(player_pos, player_forward);
-	drawPlayer(player_pos, player_forward);
+	testRaycasts(player_pos, p_angle, mapS, map, mapX, mapY, fov);
+	//drawPlayer(player_pos, player_forward);
 
 	glutSwapBuffers();
 }
@@ -152,17 +158,30 @@ void processInput(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
+void idle() 
+{
+	glutSetWindow(ThreeDWindow);
+	glutPostRedisplay();
+	glutSetWindow(TwoDWindow);
+	glutPostRedisplay();
+}
 int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 
-	Create3DGLWindow(1000, 0);
+	ThreeDWindow = Create3DGLWindow(1000, 0);
 	glutKeyboardFunc(processInput);
 	glutDisplayFunc(display3D);
 
-	Create2DGLWindow(0,0);
+	if (bDebugViewer) {
+
+		TwoDWindow = Create2DGLWindow(0, 0);
+
+		glutDisplayFunc(display2D);
+		glutKeyboardFunc(processInput);
+		glutIdleFunc(idle); //sync windows
+	}
 	
-	glutDisplayFunc(display2D);
 
 	glutMainLoop();
 

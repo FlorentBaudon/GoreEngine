@@ -5,16 +5,16 @@
 #include "GlewDrawFunctions.h"
 
 #define PI 3.1415f
-#define DEG2RAD(x) x*(3.1415f/180.f)
-#define RAD2DEG(x) x*(180.f/3.1415f)
+#define DEG2RAD(x) ( x*( 3.1415f/ 180.f ) )
+#define RAD2DEG(x) ( x*( 180.f/ 3.1415f ) )
 
 using namespace glm;
 
-bool checkIfIntersect(vec2 p, int cellSize, int map[], int mapSizeX, int mapSizeY)
+int checkCellValue(vec2 p, int cellSize, int map[], int mapSizeX, int mapSizeY)
 {
 	if (p.x > mapSizeX * cellSize || p.y > mapSizeY * cellSize || p.x < 0 || p.y < 0)
 	{
-		return true;
+		return -1;
 	}
 
 	vec2 t_p = vec2(0, 0); //truncate position
@@ -25,12 +25,7 @@ bool checkIfIntersect(vec2 p, int cellSize, int map[], int mapSizeX, int mapSize
 
 	int cell = map[tabPos];
 
-	if (cell > 0)
-	{
-		return true;
-	}
-
-	return false;
+	return cell;
 }
 
 vec2 findHorizontalIntersect(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY) 
@@ -63,13 +58,12 @@ vec2 findHorizontalIntersect(vec2 pos, float angle, int cellSize, int map[], int
 	}
 	
 	
-	bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
-
+	bIntersect = (checkCellValue(p, cellSize, map, mapSizeX, mapSizeY) != 0);
 
 	while (!bIntersect) 
 	{
 		p = p + delta;
-		bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
+		bIntersect = (checkCellValue(p, cellSize, map, mapSizeX, mapSizeY) != 0);
 	}
 
 	return p;
@@ -108,18 +102,18 @@ vec2 findVerticalIntersect(vec2 pos, float angle, int cellSize, int map[], int m
 		return vec2(100000, 100000); // return infinite point 
 	}
 
-	bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
+	bIntersect = (checkCellValue(p, cellSize, map, mapSizeX, mapSizeY) != 0);
 	
 	while (!bIntersect)
 	{
 		p = p + d;
-		bIntersect = checkIfIntersect(p, cellSize, map, mapSizeX, mapSizeY);
+		bIntersect = (checkCellValue(p, cellSize, map, mapSizeX, mapSizeY) != 0);
 	}
 
 	return p;
 }
 
-void drawRaycast(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY)
+vec2 launchRaycast(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, bool bDebug=false)
 {
 	vec2 pH = findHorizontalIntersect(pos, angle, cellSize, map, mapSizeX, mapSizeY);
 	vec2 pV = findVerticalIntersect(pos, angle, cellSize, map, mapSizeX, mapSizeY);
@@ -127,19 +121,77 @@ void drawRaycast(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, i
 	float dH =length(pH-pos);
 	float dV =length(pV-pos);
 
-	drawLine(pos, (dH < dV) ? pH : pV, vec3(0,1,0));
+	if(bDebug)
+		drawLine(pos, (dH < dV) ? pH : pV, vec3(0,1,0));
+
+	return (dH < dV) ? pH : pV;
 }
 
-void scanEnv(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov)
+
+
+void testRaycasts(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov, float precision)
 {
 	float r_angle = angle - fov/2;
-	float step = 0.1f;
 
-	for (float i = 0; i < RAD2DEG(fov); i+=step)
+	for (float i = 0; i < RAD2DEG(fov); i+=1)
 	{
-		drawRaycast(pos, r_angle, cellSize, map, mapSizeX, mapSizeY);
+		launchRaycast(pos, r_angle, cellSize, map, mapSizeX, mapSizeY, true);
 
-		r_angle += DEG2RAD(step);
+		r_angle += DEG2RAD(precision);
+
+		if (r_angle < 0) r_angle += 2 * PI;
+		if (r_angle > 2 * PI) r_angle -= 2 * PI;
+	}
+}
+
+void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov)
+{
+	float r_angle = angle - fov / 2;
+
+	//const int nbPoint = RAD2DEG(fov);
+	//int* results = new int[nbPoint];
+	//float* distances = new float[nbPoint];
+
+	for (int i = 0; i < RAD2DEG(fov); i+=1)
+	{
+		vec2 p = launchRaycast(pos, r_angle, cellSize, map, mapSizeX, mapSizeY);
+		int d = length(p - pos);
+		int r = checkCellValue(p, cellSize, map, mapSizeX, mapSizeY);
+
+
+		int dScreen = 64;
+		int hMur = 500;
+
+		if (true)
+		{
+			float hp = dScreen * (hMur / d);
+
+			vec2 start( (600.f / RAD2DEG(fov)) * i, 600.f/2 - (hp / 2));
+			vec2 end((600.f / RAD2DEG(fov) * i), 600.f/2 + (hp / 2));
+
+			printf("Start %f %f \n", start.y, end.y);
+
+			vec3 color(0, 0, 0);
+
+			switch (r)
+			{
+			case -1 :
+				color = vec3(0, 1, 0);
+				break;
+			case 0:
+				color = vec3(0, 0, 1);
+				break;
+			case 1:
+				color = vec3(1, 0, 0);
+				break;
+			default:
+				break;
+			}
+
+			drawLine(start, end, color, 10);
+		}
+
+		r_angle += DEG2RAD(1);
 
 		if (r_angle < 0) r_angle += 2 * PI;
 		if (r_angle > 2 * PI) r_angle -= 2 * PI;
