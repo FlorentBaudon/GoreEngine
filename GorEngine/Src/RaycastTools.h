@@ -1,2 +1,3 @@
 void scanEnv(const glm::vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov);
+void scanEnvDeg(const glm::vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov);
 void testRaycasts(glm::vec2 pos, float angle, int cellSize, int map[], int mapSizeX, int mapSizeY, float fov, float precision = 1.0f);

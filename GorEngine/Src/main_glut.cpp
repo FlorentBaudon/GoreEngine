@@ -16,6 +16,8 @@
 
 using namespace glm;
 
+bool once = true;
+
 bool bDebugViewer = true;
 
 int resX = 600, resY = 600;
@@ -34,12 +36,12 @@ float p_angle = radians(60.0f);
 int mapX = 8, mapY = 8, mapS = 64, gridS = 1;
 int map[] =
 {
-1,1,1,1,1,1,1,1,
+1,1,1,1,2,1,1,1,
 1,0,0,0,0,0,0,1,
 1,0,1,0,0,0,0,1,
-1,0,1,0,0,1,1,1,
+1,0,1,0,0,2,2,2,
 1,0,0,0,0,0,0,1,
-1,1,1,1,0,1,1,1,
+1,1,1,1,0,2,2,2,
 1,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1
 };
@@ -77,13 +79,18 @@ void drawMap()
 		for (int x = 0; x < mapX; x++)
 		{
 			int c = map[x + (mapX * y)];
-			if (c == 1) 
+
+			switch (c)
 			{
-				glColor3f(1, 1, 1);
-			}
-			else 
-			{
-				glColor3f(0, 0, 0);
+				case 1 :
+					glColor3f(1, 1, 1);
+					break;
+				case 2:
+					glColor3f(0, 1, 0);
+					break;
+				default:
+					glColor3f(0, 0, 0);
+					break;
 			}
 
 			xo = mapS * x;
@@ -127,12 +134,12 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 void display3D() 
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	refreshPlayerDatas();
-	scanEnv(player_pos, p_angle, mapS, map, mapX, mapY, fov);
+		refreshPlayerDatas();
+		scanEnv(player_pos, p_angle, mapS, map, mapX, mapY, fov);
 
-	glutSwapBuffers();
+		glutSwapBuffers();
 }
 
 void display2D() 
@@ -171,6 +178,7 @@ int main(int argc, char* argv[])
 
 	ThreeDWindow = Create3DGLWindow(1000, 0);
 	glutKeyboardFunc(processInput);
+
 	glutDisplayFunc(display3D);
 
 	if (bDebugViewer) {
@@ -181,8 +189,7 @@ int main(int argc, char* argv[])
 		glutKeyboardFunc(processInput);
 		glutIdleFunc(idle); //sync windows
 	}
-	
-
+		
 	glutMainLoop();
 
 	return 0;

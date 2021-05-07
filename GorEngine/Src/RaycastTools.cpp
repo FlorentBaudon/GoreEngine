@@ -5,8 +5,8 @@
 #include "GlewDrawFunctions.h"
 
 #define PI 3.1415f
-#define DEG2RAD(x) ( x*( 3.1415f/ 180.f ) )
-#define RAD2DEG(x) ( x*( 180.f/ 3.1415f ) )
+#define DEG2RAD(x) ( (x)*( 3.1415f/ 180.f ) )
+#define RAD2DEG(x) ( (x)*( 180.f/ 3.1415f ) )
 
 using namespace glm;
 
@@ -144,39 +144,38 @@ void testRaycasts(vec2 pos, float angle, int cellSize, int map[], int mapSizeX, 
 	}
 }
 
-void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov)
+void scanEnvDeg(const vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov)
 {
-	float r_angle = angle - fov / 2;
+	float r_angle = angle + fov / 2;
 
-	//const int nbPoint = RAD2DEG(fov);
-	//int* results = new int[nbPoint];
-	//float* distances = new float[nbPoint];
+	int resX = 600, resY = 600;
+	const float dScreen = abs((resX / 2) / tan(fov / 2));
+
+	int hMur = 64;
 
 	for (int i = 0; i < RAD2DEG(fov); i+=1)
+
 	{
+		float a = atan( ((resX / 2)-i) / dScreen );
+
 		vec2 p = launchRaycast(pos, r_angle, cellSize, map, mapSizeX, mapSizeY);
-		int d = length(p - pos);
+		float d = length(p - pos);
 		int r = checkCellValue(p, cellSize, map, mapSizeX, mapSizeY);
 
-
-		int dScreen = 64;
-		int hMur = 500;
 
 		if (true)
 		{
 			float hp = dScreen * (hMur / d);
 
-			vec2 start( (600.f / RAD2DEG(fov)) * i, 600.f/2 - (hp / 2));
-			vec2 end((600.f / RAD2DEG(fov) * i), 600.f/2 + (hp / 2));
-
-			printf("Start %f %f \n", start.y, end.y);
+			vec2 start( (resX / RAD2DEG(fov)) * i, resY/2 - (hp / 2));
+			vec2 end((resX / RAD2DEG(fov) * i), resY/2 + (hp / 2));
 
 			vec3 color(0, 0, 0);
 
 			switch (r)
 			{
 			case -1 :
-				color = vec3(0, 1, 0);
+				color = vec3(1, 1, 1);
 				break;
 			case 0:
 				color = vec3(0, 0, 1);
@@ -184,19 +183,76 @@ void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], c
 			case 1:
 				color = vec3(1, 0, 0);
 				break;
+			case 2:
+				color = vec3(0, 1, 0);
+				break;
 			default:
 				break;
 			}
 
-			drawLine(start, end, color, 10);
+			drawLine(start, end, color, 5);
 		}
 
-		r_angle += DEG2RAD(1);
+		r_angle -= DEG2RAD(1);
 
 		if (r_angle < 0) r_angle += 2 * PI;
 		if (r_angle > 2 * PI) r_angle -= 2 * PI;
+
 	}
 }
+
+void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], const int mapSizeX, const int mapSizeY, const float fov)
+{
+	const float r_angle = angle + fov / 2;
+
+	int resX = 600, resY = 600;
+	const float dScreen = (resX / 2) / tan(fov / 2);
+	int hMur = 64;
+	float angleStep = fov / 600;
+
+	for (int i = 0; i <resX; i++)
+	{
+		float a = abs(atan(((resX / 2) - i) / dScreen));
+		vec2 p = launchRaycast(pos, r_angle - angleStep*i, cellSize, map, mapSizeX, mapSizeY);
+
+		float d = length(p - pos);
+		int r = checkCellValue(p, cellSize, map, mapSizeX, mapSizeY);
+
+
+		if (true)
+		{
+			float hp = dScreen * (hMur / d);
+
+			vec2 start( i, resY/2 - (hp / 2));
+			vec2 end(i, resY/2 + (hp / 2));
+
+			vec3 color(0, 0, 0);
+
+			switch (r)
+			{
+			case -1:
+				color = vec3(1, 1, 1);
+				break;
+			case 0:
+				color = vec3(0, 0, 1);
+				break;
+			case 1:
+				color = vec3(1, 0, 0);
+				break;
+			case 2:
+				color = vec3(0, 1, 0);
+				break;
+			default:
+				break;
+			}
+
+			drawLine(start, end, color, 1);
+		}
+
+
+	}
+}
+
 
 
 
