@@ -9,6 +9,7 @@
 
 #include "RaycastTools.h"
 #include "GlewDrawFunctions.h"
+#include "Player.h";
 
 #define PI 3.1415f
 #define DEG2RAD(x) x*(3.1415f/180.f)
@@ -25,12 +26,12 @@ int resX = 600, resY = 600;
 int TwoDWindow, ThreeDWindow;
 
 vec2 world_forward = vec2(1,0);
+vec2 world_right = vec2(0, 1);
 float fov = DEG2RAD(60.f);
 
-vec2 player_pos = vec2(288, 70);
-vec2 player_forward = world_forward;
 
-float p_angle = radians(-90.f);
+/********* Player **********/
+Player* player = new Player(vec2(288, 70), world_forward, world_right, radians(-90.f));
 
 //Map
 int mapX = 8, mapY = 8, mapS = 64, gridS = 1;
@@ -112,9 +113,9 @@ void drawMap()
 
 void refreshPlayerDatas()
 {
-	mat4 rotMat = rotate(mat4(1.0f), p_angle, vec3(0.0f, 0.0f, 1.0f));
+	//mat4 rotMat = rotate(mat4(1.0f), player->angle, vec3(0.0f, 0.0f, 1.0f));
 
-	player_forward = glm::vec4(world_forward,0,0) * rotMat;
+	//player->forward = glm::vec4(world_forward,0,0) * rotMat;
 }
 
 void drawPlayer(vec2 p, vec2 fwd)
@@ -140,7 +141,7 @@ void display3D()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		refreshPlayerDatas();
-		scanEnv(player_pos, p_angle, mapS, map, mapX, mapY, fov);
+		scanEnv(player->position, player->angle, mapS, map, mapX, mapY, fov);
 
 		glutSwapBuffers();
 }
@@ -149,8 +150,8 @@ void display2D()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawMap();
-	testRaycasts(player_pos, p_angle, mapS, map, mapX, mapY, fov);
-	//drawPlayer(player_pos, player_forward);
+	testRaycasts(player->position, player->angle, mapS, map, mapX, mapY, fov);
+	drawPlayer(player->position, player->forward);
 
 	glutSwapBuffers();
 }
@@ -158,12 +159,15 @@ void display2D()
 void processInput(unsigned char key, int x, int y) 
 {
 	float s = 5.0f;
-	if (key == 'z') { player_pos += (player_forward * s); }
-	if (key == 's') { player_pos -= (player_forward * s); }
-	if (key == 'q') { player_pos.x -= s; }
-	if (key == 'd') { player_pos.x += s; }
-	if (key == 'a') { p_angle += radians(10.0f); }
-	if (key == 'e') { p_angle -= radians(10.0f); }
+	vec2 d = vec2(0, 0);
+	if (key == 'z') { d.x += s; }
+	if (key == 's') { d.x -= s; }
+	if (key == 'q') { d.y -= s; }
+	if (key == 'd') { d.y += s; }
+	if (key == 'a') { player->turn(  radians(10.0f) ); }
+	if (key == 'e') { player->turn( -radians(10.0f) ); }
+
+	player->move(d);
 
 	glutPostRedisplay();
 }

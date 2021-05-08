@@ -33,12 +33,18 @@
     <ClCompile Include="Src\GlewDrawFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RaycastTools.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\GlewDrawFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

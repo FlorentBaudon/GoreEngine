@@ -208,7 +208,7 @@ void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], c
 	int resX = 600, resY = 600;
 	const float dScreen = (resX / 2) / tan(fov / 2);
 	int hMur = 64;
-	float angleStep = fov / 600;
+	float angleStep = fov / resX;
 
 	for (int i = 0; i <resX; i++)
 	{
