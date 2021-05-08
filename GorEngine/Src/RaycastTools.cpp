@@ -212,10 +212,22 @@ void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], c
 
 	for (int i = 0; i <resX; i++)
 	{
-		float a = abs(atan(((resX / 2) - i) / dScreen));
-		vec2 p = launchRaycast(pos, r_angle - angleStep*i, cellSize, map, mapSizeX, mapSizeY);
+		float a = r_angle - angleStep * i;
+
+
+		/****** Launch raycast, je n'appelle pas la fonction car j'ai besoin des infos de distance pour le shading (savoir si c'est un intersect horizontale ou verticale ****/
+		vec2 pH = findHorizontalIntersect(pos, a, cellSize, map, mapSizeX, mapSizeY);
+		vec2 pV = findVerticalIntersect(pos, a, cellSize, map, mapSizeX, mapSizeY);
+
+		float dH = length(pH - pos);
+		float dV = length(pV - pos);
+
+
+		vec2 p = (dH < dV) ? pH : pV;
+		/********************************************************************************************************/
 
 		float d = length(p - pos);
+		d *= cos(a - angle);// * cos (player_angle - a) to correct distance to avoid fishey effect
 		int r = checkCellValue(p, cellSize, map, mapSizeX, mapSizeY);
 
 
@@ -237,13 +249,22 @@ void scanEnv(const vec2 pos, const float angle, const int cellSize, int map[], c
 				color = vec3(0, 0, 1);
 				break;
 			case 1:
-				color = vec3(1, 0, 0);
+				color = vec3(1, 1, 1);
 				break;
 			case 2:
 				color = vec3(0, 1, 0);
 				break;
+			case 3:
+				color = vec3(1, 0, 0);
+				break;
 			default:
 				break;
+			}
+
+			//""Lighting""
+			if (dV < dH) 
+			{
+				color *= 0.7;
 			}
 
 			drawLine(start, end, color, 1);

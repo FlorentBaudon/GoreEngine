@@ -27,10 +27,10 @@ int TwoDWindow, ThreeDWindow;
 vec2 world_forward = vec2(1,0);
 float fov = DEG2RAD(60.f);
 
-vec2 player_pos = vec2(288, 288);
+vec2 player_pos = vec2(288, 70);
 vec2 player_forward = world_forward;
 
-float p_angle = radians(60.0f);
+float p_angle = radians(-90.f);
 
 //Map
 int mapX = 8, mapY = 8, mapS = 64, gridS = 1;
@@ -41,7 +41,7 @@ int map[] =
 1,0,1,0,0,0,0,1,
 1,0,1,0,0,2,2,2,
 1,0,0,0,0,0,0,1,
-1,1,1,1,0,2,2,2,
+1,1,1,3,0,2,2,2,
 1,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1
 };
@@ -87,6 +87,9 @@ void drawMap()
 					break;
 				case 2:
 					glColor3f(0, 1, 0);
+					break;
+				case 3:
+					glColor3f(1, 0, 0);
 					break;
 				default:
 					glColor3f(0, 0, 0);
