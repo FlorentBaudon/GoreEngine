@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Raycaster.cpp" />
     <ClCompile Include="Src\Player.cpp" />
     <ClCompile Include="Src\BackupCode.cpp" />
     <ClCompile Include="Src\RaycastTools.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="Src\GlewDrawFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Raycaster.h" />
     <ClInclude Include="Src\Player.h" />
     <ClInclude Include="Src\GlewDrawFunctions.h" />
     <ClInclude Include="Src\RaycastTools.h" />

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "RaycastTools.h"
+#include "Raycaster.h"
 #include "GlewDrawFunctions.h"
 #include "Player.h";
 
@@ -28,6 +28,8 @@ int TwoDWindow, ThreeDWindow;
 vec2 world_forward = vec2(1,0);
 vec2 world_right = vec2(0, 1);
 float fov = DEG2RAD(60.f);
+
+Raycaster* raycaster;
 
 
 /********* Player **********/
@@ -138,19 +140,19 @@ void drawPlayer(vec2 p, vec2 fwd)
 
 void display3D() 
 {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		refreshPlayerDatas();
-		scanEnv(player->position, player->angle, mapS, map, mapX, mapY, fov);
+	refreshPlayerDatas();
+	raycaster->scanEnv(player->position, player->angle, fov);
 
-		glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 void display2D() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	drawMap();
-	testRaycasts(player->position, player->angle, mapS, map, mapX, mapY, fov);
+	raycaster->testRaycasts(player->position, player->angle, fov);
 	drawPlayer(player->position, player->forward);
 
 	glutSwapBuffers();
@@ -181,6 +183,7 @@ void idle()
 }
 int main(int argc, char* argv[])
 {
+	raycaster = new Raycaster(mapS, map, mapX, mapY, fov, resX, resY);
 	glutInit(&argc, argv);
 
 	ThreeDWindow = Create3DGLWindow(1000, 0);
