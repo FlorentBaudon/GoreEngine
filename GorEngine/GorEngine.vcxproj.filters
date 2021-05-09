@@ -18,18 +18,6 @@
     <ClCompile Include="Src\main_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\main_glut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\OldMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\RaycastTools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BackupCode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\GlewDrawFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,11 +27,20 @@
     <ClCompile Include="Src\Raycaster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\OldCode\BackupCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OldCode\main_glut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OldCode\OldMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OldCode\RaycastTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\RaycastTools.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Src\GlewDrawFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="Src\Raycaster.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OldCode\RaycastTools.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -135,7 +135,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -151,18 +151,18 @@
   <ItemGroup>
     <ClCompile Include="Src\Raycaster.cpp" />
     <ClCompile Include="Src\Player.cpp" />
-    <ClCompile Include="Src\BackupCode.cpp" />
-    <ClCompile Include="Src\RaycastTools.cpp" />
+    <ClCompile Include="Src\OldCode\BackupCode.cpp" />
+    <ClCompile Include="Src\OldCode\RaycastTools.cpp" />
     <ClCompile Include="Src\main_glfw.cpp" />
-    <ClCompile Include="Src\main_glut.cpp" />
-    <ClCompile Include="Src\OldMain.cpp" />
+    <ClCompile Include="Src\OldCode\main_glut.cpp" />
+    <ClCompile Include="Src\OldCode\OldMain.cpp" />
     <ClCompile Include="Src\GlewDrawFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Raycaster.h" />
     <ClInclude Include="Src\Player.h" />
     <ClInclude Include="Src\GlewDrawFunctions.h" />
-    <ClInclude Include="Src\RaycastTools.h" />
+    <ClInclude Include="Src\OldCode\RaycastTools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
