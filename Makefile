@@ -2,11 +2,12 @@
 CC=g++
 CFLAG=-W -Wall -ansi -std=c++11
 
-LDFLAGS =-lglew32
+LDFLAGS =-lglew32 -lglfw3
 
-LIBRAIRIES=-LDependencies/GLEW/lib/Release/x64/
+LIBRAIRIES=-LDependencies/GLEW/lib/Release/x64/ -LDependencies/GLFW/lib-mingw-w64/
 
 DEPS = -IDependencies/GLEW/include/
+DEPS+= -IDependencies/GLFW/include/
 DEPS+= -IDependencies/glm/
 
 SRCDIR=GorEngine/Src/
